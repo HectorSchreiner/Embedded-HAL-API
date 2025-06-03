@@ -2,33 +2,36 @@
 #![no_main]
 
 #[macro_use]
-mod print;
+mod console;
+mod joystick;
 
-use arduino_hal::adc::AdcSettings;
-use print::*;
+use crate::console::console_init;
+use crate::joystick::*;
+
+use core::pin::Pin;
+use arduino_hal::adc::*;
+use arduino_hal::hal::port::{PC1, PC2};
+use console::*;
 use panic_halt as _;
 
 #[arduino_hal::entry]
 fn main() -> ! {
-
     let dp = arduino_hal::Peripherals::take().unwrap();
     let pins = arduino_hal::pins!(dp);
     let mut adc = arduino_hal::Adc::new(dp.ADC, AdcSettings::default());
-
-    let joystick_pin_x = pins.a1.into_analog_input(&mut adc);
-    let joystick_pin_y = pins.a2.into_analog_input(&mut adc);
+    
+    let mut joystick = Joystick::new(
+        pins.a1.into_analog_input(&mut adc), 
+        pins.a2.into_analog_input(&mut adc)
+    );  
 
     let serial = arduino_hal::default_serial!(dp, pins, 57600);
+    console_init(serial);
     
-    // Set up global console for use in macros
-    avr_device::interrupt::free(|cs| {
-        CONSOLE.borrow(cs).replace(Some(serial));
-    });
-
-    loop {
-        let x = joystick_pin_x.analog_read(&mut adc);
-        let y = joystick_pin_y.analog_read(&mut adc);
-
-        println!("X: {}, Y: {}", x, y);
+    loop {        
+        let (x, y) = joystick.read_analog(&mut adc);
+        console_writeln!("X: {}, Y: {}", x, y);
     }
 }
+
+
