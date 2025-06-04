@@ -7,17 +7,17 @@ pub struct Joystick {
 
 impl Joystick {
     /// Initialize the Joystic.
-    /// 
+    ///
     /// **Example**:
     /// ```no_run
     ///    let dp = arduino_hal::Peripherals::take().unwrap();
     ///    let pins = arduino_hal::pins!(dp);
     ///    let mut adc = arduino_hal::Adc::new(dp.ADC, AdcSettings::default());
-    ///    
+    ///
     ///    let mut joystick = Joystick::new(
-    ///        pins.a1.into_analog_input(&mut adc), 
+    ///        pins.a1.into_analog_input(&mut adc),
     ///        pins.a2.into_analog_input(&mut adc)
-    ///    );  
+    ///    );
     /// ```
     pub fn new(
         pin_x: arduino_hal::port::Pin<arduino_hal::port::mode::Analog, PC1>,
@@ -27,12 +27,12 @@ impl Joystick {
     }
 
     /// Read the Joystic values, and returns a `(u16, u16)`.
-    /// 
+    ///
     /// **Example**:
     /// ```no_run
     ///     let (x, y) = joystick.read_analog(&mut adc);
     ///     console_writeln!("X: {}, Y: {}", x, y);
-    /// ```   
+    /// ```
 
     pub fn read_analog(&mut self, adc: &mut Adc) -> (u16, u16) {
         let x = self.pin_x.analog_read(adc);
@@ -80,35 +80,42 @@ impl Deadzone2Axis {
         let out_min = 0.0;
         let out_max = 1.0;
 
-        let mapped_x = Self::clamp(
-            Self::map_float(input.0, self.x_lower, self.x_upper, out_min, out_max),
+        let mapped_x = clamp(
+            map_float(input.0, self.x_lower, self.x_upper, out_min, out_max),
             out_min,
             out_max,
         );
-        let mapped_y = Self::clamp(
-            Self::map_float(input.1, self.y_lower, self.y_upper, out_min, out_max),
+        let mapped_y = clamp(
+            map_float(input.1, self.y_lower, self.y_upper, out_min, out_max),
             out_min,
             out_max,
         );
 
         Normalized2D::new(mapped_x, mapped_y)
     }
+}
 
-    fn map_float(value: f32, in_min: f32, in_max: f32, out_min: f32, out_max: f32) -> f32 {
-        if (in_max - in_min).abs() < f32::EPSILON {
-            out_min
-        } else {
-            (value - in_min) / (in_max - in_min) * (out_max - out_min) + out_min
-        }
+fn map_float(value: f32, in_min: f32, in_max: f32, out_min: f32, out_max: f32) -> f32 {
+    if (in_max - in_min).abs() < f32::EPSILON {
+        out_min
+    } else {
+        (value - in_min) / (in_max - in_min) * (out_max - out_min) + out_min
     }
+}
 
-    fn clamp(val: f32, min: f32, max: f32) -> f32 {
-        if val < min {
-            min
-        } else if val > max {
-            max
-        } else {
-            val
-        }
+/// Clamps an *input value* between a *min* and *max*.
+///
+/// **Example:**
+/// ```no_run
+///     // clamps the variable *value* between 0.0 and 1.0
+///     Self::clamp(value, 0.0, 1.1)
+/// ```
+fn clamp(val: f32, min: f32, max: f32) -> f32 {
+    if val < min {
+        min
+    } else if val > max {
+        max
+    } else {
+        val
     }
 }
