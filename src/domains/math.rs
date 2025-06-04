@@ -21,7 +21,9 @@ impl From<(T, T)> for Vec2<T> {
     }
 }
 
-/// Normalized2D is a form of Vec2. The Normalized2D struct holds a vec, which lenght is normalized to a size of 1.0.
+pub struct NormalizeError(pub String);
+
+/// Normalized2D is a form of Vec2. The Normalized2D struct holds a Vec2, which length is normalized to a size of 1.0.
 pub struct Normalized2D<T: num_traits::Float> {
     vec: Vec2<T>
 }
@@ -32,7 +34,7 @@ impl<T: num_traits::Float> Normalized2D<T> {
         Self { vec }
     }
 
-    fn normalize(&mut self) {
+    fn normalize(&mut self) -> Result<(), NormalizeError>{
         let length = Self::len(&self);
         if length > T::zero() {
             self.vec.x = self.vec.x / length;
@@ -42,6 +44,10 @@ impl<T: num_traits::Float> Normalized2D<T> {
 
     fn len(&self) -> T {
         (self.vec.x * self.vec.x + self.vec.y * self.vec.y).sqrt()
+    }
+
+    pub fn get_vec(&self) -> Vec2<T> {
+        self.vec
     }
 }
 
