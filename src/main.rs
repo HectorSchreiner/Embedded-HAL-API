@@ -6,7 +6,7 @@ mod console;
 mod joystick;
 
 use crate::console::console_init;
-use crate::joystick::*;
+use crate::joystick;
 
 use core::pin::Pin;
 use arduino_hal::adc::*;
