@@ -21,15 +21,11 @@ scoop install avrdude
 sudo apt install avr-libc gcc-avr pkg-config avrdude libudev-dev build-essential
 ```
 ## Nixos
-Add the following to your configuration.nix
+Install the dependencies and run it in a nix-shell with the command
 ```
-avr-libc 
-gcc-avr 
-pkg-config 
-avrdude 
-libudev-dev 
-build-essential
+nix develop
 ```
+
 --- 
 After any of these steps, the next step is to install the [ravedude](https://github.com/Rahix/avr-hal/blob/main/ravedude) tool for flashing the microcontroller board against `cargo`:
 ```bash
@@ -64,6 +60,12 @@ And compile the code with the command
 cargo run -- -P COM3
 ```
 
+## Linux
+setting the serial com port for ravedude with this script:
+
+```bash
+export RAVEDUDE_PORT=/dev/ttyUSB0
+```
 
 ## License
 Licensed under either of

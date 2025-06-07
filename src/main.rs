@@ -12,8 +12,10 @@ mod adapters;
 mod mock;
 mod ports;
 
-use crate::adapters::arduino_uno::joystick::*;
+use crate::adapters::arduino_uno::joystick::{self, *};
 use crate::console::CONSOLE;
+use crate::domains::joystick::JoystickReader;
+use crate::domains::types::Deadzone2Axis;
 
 #[arduino_hal::entry]
 fn main() -> ! {
@@ -30,7 +32,9 @@ fn main() -> ! {
     console::console_init(serial);
 
     loop {
-        let (x, y) = joystick.read_analog(&mut adc);
-        console_writeln!("X: {}, Y: {}", x, y);
+        let normalized = joystick.read_analog_normalized(&mut adc, Deadzone2Axis::new(258, 728, 248, 713));
+        let scaled_x = (normalized.x * 1000.0) as u16;
+        let scaled_y = (normalized.y * 1000.0) as u16;
+        console_writeln!("X: {}, Y: {}", scaled_x, scaled_y);
     }
 }

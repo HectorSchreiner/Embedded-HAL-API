@@ -2,13 +2,19 @@ use libm::sqrt;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Vec2<T> {
-    x: T,
-    y: T
+    pub x: T,
+    pub y: T
 }
 
 impl<T> Vec2<T> {
     pub fn new(x: T, y: T) -> Self {
         Self { x, y }
+    }
+}
+
+impl Vec2<f64> {
+    pub fn empty() -> Self {
+        Self { x: 0.0, y: 0.0 }
     }
 }
 
@@ -46,9 +52,7 @@ impl TryFrom<(f64, f64)> for Normalized2D {
     
     fn try_from(value: (f64, f64)) -> Result<Self, Self::Error> {
         Self::new(Vec2::new(value.0, value.1))
-    }
-    
-    
+    }    
 }
 
 /// Helper function to map a value.

@@ -1,10 +1,12 @@
 use crate::domains::math::*;
 
 pub struct Deadzone2Axis {
-    x_lower: f64,
-    x_upper: f64,
-    y_lower: f64,
-    y_upper: f64,
+    pub x_lower: u16,
+    pub x_middle:u16,
+    pub x_upper: u16,
+    pub y_lower: u16,
+    pub y_middle:u16,
+    pub y_upper: u16
 }
 
 impl Deadzone2Axis {
