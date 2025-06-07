@@ -1,23 +1,23 @@
 use crate::domains::math::*;
 
 pub struct Deadzone2Axis {
-    x_lower: f32,
-    x_upper: f32,
-    y_lower: f32,
-    y_upper: f32,
+    x_lower: f64,
+    x_upper: f64,
+    y_lower: f64,
+    y_upper: f64,
 }
 
 impl Deadzone2Axis {
     pub fn new(x_lower: usize, x_upper: usize, y_lower: usize, y_upper: usize) -> Self {
         Self {
-            x_lower: x_lower as f32,
-            x_upper: x_upper as f32,
-            y_lower: y_lower as f32,
-            y_upper: y_upper as f32,
+            x_lower: x_lower as f64,
+            x_upper: x_upper as f64,
+            y_lower: y_lower as f64,
+            y_upper: y_upper as f64,
         }
     }
 
-    pub fn normalize(&self, input: (f32, f32)) -> Normalized2D {
+    pub fn normalize(&self, input: (f64, f64)) -> Result<Normalized2D, NormalizeError> {
         let out_min = 0.0;
         let out_max = 1.0;
 
@@ -32,6 +32,6 @@ impl Deadzone2Axis {
             out_max,
         );
 
-        //Normalized2D::new(mapped_x, mapped_y)
+        Normalized2D::try_from((mapped_x, mapped_y))
     }
 }

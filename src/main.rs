@@ -1,23 +1,19 @@
 #![no_std]
 #![no_main]
 
-#[macro_use]
-mod console;
-mod joystick;
-
-use crate::console::console_init;
-use crate::joystick;
-
 use core::pin::Pin;
 use arduino_hal::adc::*;
 use arduino_hal::hal::port::{PC1, PC2};
-use console::*;
 use panic_halt as _;
 
+mod console;
 mod domains;
 mod adapters;
 mod mock;
 mod ports;
+
+use crate::adapters::arduino_uno::joystick::*;
+use crate::console::CONSOLE;
 
 #[arduino_hal::entry]
 fn main() -> ! {
@@ -31,7 +27,7 @@ fn main() -> ! {
     );
 
     let serial = arduino_hal::default_serial!(dp, pins, 57600);
-    console_init(serial);
+    console::console_init(serial);
 
     loop {
         let (x, y) = joystick.read_analog(&mut adc);
