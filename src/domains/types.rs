@@ -10,15 +10,23 @@ pub struct Deadzone2Axis {
 }
 
 impl Deadzone2Axis {
-    pub fn new(x_lower: usize, x_upper: usize, y_lower: usize, y_upper: usize) -> Self {
+    pub fn new(    
+    x_lower: u16,
+    x_middle:u16,
+    x_upper: u16,
+    y_lower: u16,
+    y_middle:u16,
+    y_upper: u16) -> Self {
         Self {
-            x_lower: x_lower as f64,
-            x_upper: x_upper as f64,
-            y_lower: y_lower as f64,
-            y_upper: y_upper as f64,
+            x_lower,
+            x_middle,
+            x_upper,
+            y_lower,
+            y_middle,
+            y_upper
         }
     }
-
+/*
     pub fn normalize(&self, input: (f64, f64)) -> Result<Normalized2D, NormalizeError> {
         let out_min = 0.0;
         let out_max = 1.0;
@@ -36,4 +44,5 @@ impl Deadzone2Axis {
 
         Normalized2D::try_from((mapped_x, mapped_y))
     }
+    */
 }

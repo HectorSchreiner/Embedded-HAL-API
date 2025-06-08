@@ -1,6 +1,6 @@
 use arduino_hal::{hal::port::{PC1, PC2}, port::{mode::Analog, Pin}, Adc};
 
-use crate::{adapters::arduino_uno::joystick, domains::{joystick::JoystickReader, math::{clamp, map_float, Vec2}, types::Deadzone2Axis}};
+use crate::{adapters::arduino_uno::joystick, domains::{joystick::JoystickReader, math::{clamp, Vec2}, types::Deadzone2Axis}};
 
 pub struct Joystick {
     pin_x: arduino_hal::port::Pin<arduino_hal::port::mode::Analog, PC1>,
@@ -25,31 +25,20 @@ impl JoystickReader<f32> for Joystick {
         Vec2::new(x, y)
     }
 
-    fn read_analog_normalized(&mut self, adc: &mut Adc, deadzone: Deadzone2Axis) -> Vec2<f64> {
-        let pos = Self::read_analog(self, adc);
-        let mut normalized = Vec2::empty();
+    /// returns the read_analog, but normalised to a value from 0-1000
+    fn read_analog_normalized(&mut self, adc: &mut Adc, deadzone: Deadzone2Axis) -> Vec2<u16> {
+        let mut x_lower = deadzone.x_lower;
+        let mut x_middle = deadzone.x_middle;
+        let mut x_upper = deadzone.x_upper;
 
-        normalized.x = clamp(
-            map_float(
-                pos.x as f64,
-                deadzone.x_lower,
-                deadzone.x_upper, 
-                0.0, 
-                1.0), 
-            0.0,
-            1.0);
+        let mut y_lower = deadzone.y_lower;
+        let mut y_middle = deadzone.y_middle;
+        let mut y_upper = deadzone.y_upper;
 
-        normalized.y = clamp(
-            map_float(
-                pos.x as f64,
-                deadzone.y_lower,
-                deadzone.y_upper, 
-                0.0, 
-                1.0), 
-            0.0,
-            1.0);
-
-        normalized
+        let Vec2 {x, y} = Self::read_analog(self, adc);
+        
+                
+        todo!()
     }
 }
 

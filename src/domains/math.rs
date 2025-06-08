@@ -1,4 +1,5 @@
 use libm::sqrt;
+use num_traits::{Num, NumCast};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Vec2<T> {
@@ -15,6 +16,12 @@ impl<T> Vec2<T> {
 impl Vec2<f64> {
     pub fn empty() -> Self {
         Self { x: 0.0, y: 0.0 }
+    }
+}
+
+impl Vec2<u16> {
+    pub fn empty() -> Self {
+        Self { x: 0, y: 0 }
     }
 }
 
@@ -55,13 +62,27 @@ impl TryFrom<(f64, f64)> for Normalized2D {
     }    
 }
 
+pub struct MapValueError;
+
 /// Helper function to map a value.
-pub fn map_float(value: f64, in_min: f64, in_max: f64, out_min: f64, out_max: f64) -> f64 {
-    if (in_max - in_min).abs() < f64::EPSILON {
+pub fn map_value<T>(value: T, in_min: T, in_max: T, out_min: T, out_max: T) -> Result<T, MapValueError>
+where
+    T: Num + NumCast + Copy + PartialOrd + PartialEq,
+{
+    // needed to make code generic
+    let value: f64 = NumCast::from(value).unwrap();
+    let in_min: f64= NumCast::from(in_min).unwrap();
+    let in_max: f64 = NumCast::from(in_max).unwrap();
+    let out_min: f64 = NumCast::from(out_min).unwrap();
+    let out_max: f64 = NumCast::from(out_max).unwrap();
+
+    let result = if (in_max - in_min).abs() < f64::EPSILON {
         out_min
     } else {
         (value - in_min) / (in_max - in_min) * (out_max - out_min) + out_min
-    }
+    };
+
+    T::from(result).ok_or(MapValueError)
 }
 
 /// Clamps an *input value* between a *min* and *max*.
@@ -71,7 +92,10 @@ pub fn map_float(value: f64, in_min: f64, in_max: f64, out_min: f64, out_max: f6
 ///     // clamps the variable *value* between 0.0 and 1.0
 ///     Self::clamp(value, 0.0, 1.1)
 /// ```
-pub fn clamp(val: f64, min: f64, max: f64) -> f64 {
+pub fn clamp<T>(val: T, min: T, max: T) -> T 
+where
+    T: Num + NumCast + Copy + PartialOrd + PartialEq,
+{
     if val < min {
         min
     } else if val > max {

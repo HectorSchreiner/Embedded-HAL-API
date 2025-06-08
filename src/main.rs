@@ -32,9 +32,7 @@ fn main() -> ! {
     console::console_init(serial);
 
     loop {
-        let normalized = joystick.read_analog_normalized(&mut adc, Deadzone2Axis::new(258, 728, 248, 713));
-        let scaled_x = (normalized.x * 1000.0) as u16;
-        let scaled_y = (normalized.y * 1000.0) as u16;
-        console_writeln!("X: {}, Y: {}", scaled_x, scaled_y);
+        let pos = joystick.read_analog(&mut adc);
+        console_writeln!("X: {}, Y: {}", pos.x, pos.y);
     }
 }

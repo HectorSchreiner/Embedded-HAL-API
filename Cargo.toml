@@ -17,6 +17,7 @@ nb = "1.1.0"
 embedded-hal = "1.0"
 avr-device = "0.7.0"
 libm = "0.2.15"
+num-traits = { version = "0.2", default-features = false }
 
 [dependencies.arduino-hal]
 git = "https://github.com/rahix/avr-hal"
