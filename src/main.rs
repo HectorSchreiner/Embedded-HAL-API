@@ -1,9 +1,7 @@
 #![no_std]
 #![no_main]
 
-use core::pin::Pin;
 use arduino_hal::adc::*;
-use arduino_hal::hal::port::{PC1, PC2};
 use panic_halt as _;
 
 mod console;
@@ -12,10 +10,9 @@ mod adapters;
 mod mock;
 mod ports;
 
-use crate::adapters::arduino_uno::joystick::{self, *};
+use crate::adapters::arduino_uno::joystick::*;
 use crate::console::CONSOLE;
 use crate::domains::joystick::JoystickReader;
-use crate::domains::types::Deadzone2Axis;
 
 #[arduino_hal::entry]
 fn main() -> ! {
