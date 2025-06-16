@@ -1,5 +1,5 @@
 # Setting up the project
-The folling setup is based on this [Guide](https://blog.logrocket.com/complete-guide-running-rust-arduino/).
+The following setup is based on this [Guide](https://blog.logrocket.com/complete-guide-running-rust-arduino/).
 
 Install nightly
 ```bash
